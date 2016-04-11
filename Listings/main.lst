@@ -1,0 +1,85 @@
+C51 COMPILER V9.54   MAIN                                                                  04/11/2016 22:40:24 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX51.H>
+   2          #include <stdio.h>
+   3          
+   4          char putchar(char);
+   5          void delay(unsigned int);
+   6          
+   7          unsigned short buffer;
+   8          
+   9          sbit CLK = P2^0;
+  10          sbit DIN = P2^1;
+  11          sbit DOUT = P2^2;
+  12          
+  13          void main()
+  14          {
+  15   1        unsigned int i;
+  16   1        SCON = 0x50;
+  17   1        TMOD = 0x20;
+  18   1        TCON = 0x40;
+  19   1        TH1 = 243; //baud rate 2400
+  20   1        TR1 = 1;
+  21   1        ES = 1;
+  22   1        RI = 1;
+  23   1        TI = 1;
+  24   1        
+  25   1        CLK = 0;
+  26   1        DIN = 0;
+  27   1        while(1)
+  28   1        {
+  29   2          buffer = 0;
+  30   2          for(i = 0; i < 12; i++)
+  31   2          {
+  32   3            buffer |= ((DOUT & 0xFF) << (11-i));
+  33   3            CLK = 1;
+  34   3            delay(5);
+  35   3            CLK = 0;
+  36   3            delay(5);
+  37   3          }
+  38   2          printf("%hu\n\r", buffer);
+  39   2          delay(10);
+  40   2        }
+  41   1      }
+  42          
+  43          char putchar(char c)
+  44          {
+  45   1        SBUF = c;
+  46   1        while(!TI);
+  47   1        TI = 0;
+  48   1        return c;
+  49   1      }
+  50          
+  51          void delay(unsigned int t)
+  52          {
+  53   1        unsigned int i;
+  54   1        unsigned char j;
+C51 COMPILER V9.54   MAIN                                                                  04/11/2016 22:40:24 PAGE 2   
+
+  55   1        for(i = 0; i < t; i++)
+  56   1        {
+  57   2          for(j = 0; j < 255; j++);
+  58   2        }
+  59   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    154    ----
+   CONSTANT SIZE    =      6    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

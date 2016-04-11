@@ -1,0 +1,3 @@
+".\Objects\main.obj" 
+TO ".\Objects\ADC-TLC2543" 
+PRINT(".\Listings\ADC-TLC2543.m51")
