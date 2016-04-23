@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  04/11/2016 22:40:24 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  04/23/2016 11:23:55 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -14,7 +14,7 @@ line level    source
    4          char putchar(char);
    5          void delay(unsigned int);
    6          
-   7          unsigned short buffer;
+   7          unsigned short buffer, cmd;
    8          
    9          sbit CLK = P2^0;
   10          sbit DIN = P2^1;
@@ -22,7 +22,7 @@ line level    source
   12          
   13          void main()
   14          {
-  15   1        unsigned int i;
+  15   1        unsigned int i, j;
   16   1        SCON = 0x50;
   17   1        TMOD = 0x20;
   18   1        TCON = 0x40;
@@ -36,47 +36,52 @@ line level    source
   26   1        DIN = 0;
   27   1        while(1)
   28   1        {
-  29   2          buffer = 0;
-  30   2          for(i = 0; i < 12; i++)
-  31   2          {
-  32   3            buffer |= ((DOUT & 0xFF) << (11-i));
-  33   3            CLK = 1;
-  34   3            delay(5);
-  35   3            CLK = 0;
-  36   3            delay(5);
-  37   3          }
-  38   2          printf("%hu\n\r", buffer);
-  39   2          delay(10);
-  40   2        }
-  41   1      }
-  42          
-  43          char putchar(char c)
-  44          {
-  45   1        SBUF = c;
-  46   1        while(!TI);
-  47   1        TI = 0;
-  48   1        return c;
-  49   1      }
-  50          
-  51          void delay(unsigned int t)
-  52          {
-  53   1        unsigned int i;
-  54   1        unsigned char j;
-C51 COMPILER V9.54   MAIN                                                                  04/11/2016 22:40:24 PAGE 2   
+  29   2          for(i = 0; i < 11; i++)
+  30   2          {
+  31   3            cmd = i << 4;
+  32   3            buffer = 0;
+  33   3            for(j = 0; j < 12; j++)
+  34   3            {
+  35   4              if(j < 8) DIN = (cmd >> (7-j)) & 0x01;
+  36   4              buffer |= ((DOUT & 0xFF) << (11-j));        
+  37   4              CLK = 1;
+  38   4              delay(5);
+  39   4              CLK = 0;
+  40   4              delay(5);
+  41   4            }
+  42   3            printf("Channel %d value: %hu\n\r", (i == 0) ? 10 : (i - 1), buffer);
+  43   3            delay(10);
+  44   3          }
+  45   2        }
+  46   1      }
+  47          
+  48          char putchar(char c)
+  49          {
+  50   1        SBUF = c;
+  51   1        while(!TI);
+  52   1        TI = 0;
+  53   1        return c;
+  54   1      }
+C51 COMPILER V9.54   MAIN                                                                  04/23/2016 11:23:55 PAGE 2   
 
-  55   1        for(i = 0; i < t; i++)
-  56   1        {
-  57   2          for(j = 0; j < 255; j++);
-  58   2        }
-  59   1      }
+  55          
+  56          void delay(unsigned int t)
+  57          {
+  58   1        unsigned int i;
+  59   1        unsigned char j;
+  60   1        for(i = 0; i < t; i++)
+  61   1        {
+  62   2          for(j = 0; j < 255; j++);
+  63   2        }
+  64   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    154    ----
-   CONSTANT SIZE    =      6    ----
+   CODE SIZE        =    259    ----
+   CONSTANT SIZE    =     24    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      2       2
+   DATA SIZE        =      4       4
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
